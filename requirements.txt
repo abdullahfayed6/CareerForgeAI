@@ -1,17 +1,8 @@
-# Web framework
 fastapi
 uvicorn
-
-# Data validation
 pydantic
-
-# HTTP client
 requests
-
-# LangGraph & LangChain
 langgraph
 langchain-core
 langchain-openai
-
-# Environment variables
 python-dotenv

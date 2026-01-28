@@ -10,6 +10,7 @@ load_dotenv()
 class Settings:
     openai_api_key: str | None
     search_api_key: str | None
+    rapidapi_key: str | None  # RapidAPI key for LinkedIn API
     search_provider: str
     max_results: int
     top_k: int
@@ -19,6 +20,7 @@ def _load_settings() -> Settings:
     return Settings(
         openai_api_key=os.getenv("OPENAI_API_KEY"),
         search_api_key=os.getenv("SEARCH_API_KEY"),
+        rapidapi_key=os.getenv("RAPIDAPI_KEY"),
         search_provider=os.getenv("SEARCH_PROVIDER", "mock"),
         max_results=int(os.getenv("MAX_RESULTS", "20")),
         top_k=int(os.getenv("TOP_K", "5")),
