@@ -117,6 +117,98 @@ Return ONLY a JSON array of strings, like:
                 "Could be a stepping stone for your career.",
             ]
 
+    def score_opportunity_ai(
+        self,
+        profile: Any,
+        opportunity: Any,
+    ) -> dict[str, Any] | None:
+        """
+        Score a job opportunity against a user profile using AI.
+        
+        Returns a dict with 'score' (int 0-100) and 'reasons' (list of strings).
+        """
+        # Extract profile info
+        user_track = getattr(profile, 'track', 'Not specified')
+        user_year = getattr(profile, 'year_level', 'Not specified')
+        location_pref = getattr(profile, 'location_preference', 'Not specified')
+        
+        # Get skills from profile
+        skills_obj = getattr(profile, 'skills', None)
+        if skills_obj:
+            hard_skills = getattr(skills_obj, 'hard', [])
+            tools = getattr(skills_obj, 'tools', [])
+            soft_skills = getattr(skills_obj, 'soft', [])
+            all_skills = hard_skills + tools + soft_skills
+        else:
+            all_skills = []
+        
+        # Extract opportunity info
+        job_title = getattr(opportunity, 'title', 'Unknown')
+        company = getattr(opportunity, 'company', 'Unknown')
+        job_location = getattr(opportunity, 'location', 'Unknown')
+        description = getattr(opportunity, 'description', '')
+        
+        prompt = f"""You are a career advisor scoring a job opportunity for a student.
+
+**Student Profile:**
+- Track/Major: {user_track}
+- Skills: {', '.join(all_skills) if all_skills else 'Not specified'}
+- Academic Year: {user_year}
+- Location Preference: {location_pref}
+
+**Job Opportunity:**
+- Title: {job_title}
+- Company: {company}
+- Location: {job_location}
+- Description: {description[:800] if description else 'No description available'}
+
+Score this job match from 0-100 based on:
+1. Skills alignment (40%)
+2. Role fit for their academic level (25%)
+3. Location preference match (20%)
+4. Career growth potential (15%)
+
+Also provide 3-4 specific reasons explaining the score.
+
+Return ONLY valid JSON in this exact format:
+{{"score": 75, "reasons": ["Reason 1", "Reason 2", "Reason 3"]}}
+"""
+
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a helpful career advisor. Return only valid JSON."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.5,
+                max_tokens=400,
+            )
+            
+            content = response.choices[0].message.content.strip()
+            
+            # Handle potential markdown code blocks
+            if content.startswith("```"):
+                content = content.split("```")[1]
+                if content.startswith("json"):
+                    content = content[4:]
+                content = content.strip()
+            
+            result = json.loads(content)
+            
+            if isinstance(result, dict) and "score" in result and "reasons" in result:
+                # Ensure score is within bounds
+                score = max(0, min(100, int(result["score"])))
+                reasons = result["reasons"] if isinstance(result["reasons"], list) else []
+                return {"score": score, "reasons": reasons[:5]}
+            
+            logger.warning("Invalid AI response format for scoring")
+            return None
+            
+        except Exception as e:
+            logger.error(f"OpenAI scoring error: {e}")
+            return None
+
 
 def get_openai_client() -> OpenAIClient | None:
     """Get OpenAI client if API key is configured."""

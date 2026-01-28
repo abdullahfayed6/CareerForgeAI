@@ -280,7 +280,8 @@ def score_opportunities(state: MatchState, config: RunnableConfig) -> dict:
     opportunities = state["clean_opportunities"]
     
     from app.services.openai_client import OpenAIClient
-    ai_client = OpenAIClient()
+    from app.config import settings
+    ai_client = OpenAIClient(api_key=settings.openai_api_key)
     
     scored = []
     for opp in opportunities:

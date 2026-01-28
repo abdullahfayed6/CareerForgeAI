@@ -99,6 +99,13 @@ class SessionManagerAgent(BaseInterviewAgent):
         questions_in_state: int,
     ) -> StateTransition:
         """Simple state transition check without LLM call."""
+        # Convert string to enum if needed
+        if isinstance(current_state, str):
+            try:
+                current_state = InterviewState(current_state)
+            except ValueError:
+                current_state = InterviewState.CORE_QUESTIONS
+        
         # Get required questions for current state
         required = STATE_QUESTION_LIMITS.get(current_state, 1)
         
@@ -111,23 +118,32 @@ class SessionManagerAgent(BaseInterviewAgent):
             # Generate state instructions
             state_instructions = self._get_state_instructions(next_state)
             
+            current_state_str = current_state.value if hasattr(current_state, 'value') else current_state
             return StateTransition(
                 should_transition=True,
                 next_state=next_state,
-                reason=f"Completed {questions_in_state} question(s) in {current_state.value} state.",
+                reason=f"Completed {questions_in_state} question(s) in {current_state_str} state.",
                 state_instructions=state_instructions,
             )
         else:
+            current_state_str = current_state.value if hasattr(current_state, 'value') else current_state
             return StateTransition(
                 should_transition=False,
                 next_state=current_state,
-                reason=f"Need {required - questions_in_state} more question(s) in {current_state.value} state.",
+                reason=f"Need {required - questions_in_state} more question(s) in {current_state_str} state.",
                 state_instructions=self._get_state_instructions(current_state),
             )
     
     @staticmethod
-    def _get_state_instructions(state: InterviewState) -> str:
+    def _get_state_instructions(state: InterviewState | str) -> str:
         """Get instructions for a given state."""
+        # Convert string to enum if needed
+        if isinstance(state, str):
+            try:
+                state = InterviewState(state)
+            except ValueError:
+                return "Continue with the interview flow."
+        
         instructions = {
             InterviewState.INTRO: "Start with a warm introduction. Ask the candidate to introduce themselves.",
             InterviewState.WARMUP: "Ask easy, foundational questions to build confidence.",

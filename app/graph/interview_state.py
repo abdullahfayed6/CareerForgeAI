@@ -80,14 +80,30 @@ STATE_ORDER = [
 ]
 
 
-def get_next_state(current_state: InterviewState) -> InterviewState:
+def get_next_state(current_state: InterviewState | str) -> InterviewState:
     """Get the next state in the interview flow."""
-    current_index = STATE_ORDER.index(current_state)
-    if current_index < len(STATE_ORDER) - 1:
-        return STATE_ORDER[current_index + 1]
+    # Convert string to enum if needed
+    if isinstance(current_state, str):
+        try:
+            current_state = InterviewState(current_state)
+        except ValueError:
+            return InterviewState.FEEDBACK
+    
+    try:
+        current_index = STATE_ORDER.index(current_state)
+        if current_index < len(STATE_ORDER) - 1:
+            return STATE_ORDER[current_index + 1]
+    except ValueError:
+        pass
     return InterviewState.FEEDBACK
 
 
-def get_questions_for_state(state: InterviewState) -> int:
+def get_questions_for_state(state: InterviewState | str) -> int:
     """Get the number of questions expected for a given state."""
+    # Convert string to enum if needed
+    if isinstance(state, str):
+        try:
+            state = InterviewState(state)
+        except ValueError:
+            return 1
     return STATE_QUESTION_LIMITS.get(state, 1)
