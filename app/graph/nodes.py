@@ -167,7 +167,10 @@ def build_queries(state: MatchState, config: RunnableConfig) -> dict:
 
 
 def retrieve_opportunities(state: MatchState, config: RunnableConfig) -> dict:
-    """Retrieve exactly MAX_RESULTS opportunities from search provider."""
+    """Retrieve exactly MAX_RESULTS opportunities from search provider.
+    
+    Uses a single search call to limit API usage to max 10 calls.
+    """
     queries = state["queries"]
     profile = state["profile"]
     client = get_search_client()
@@ -176,57 +179,15 @@ def retrieve_opportunities(state: MatchState, config: RunnableConfig) -> dict:
     seen_urls = set()
     required_count = settings.max_results
     
-    # First pass: search with all queries
-    for query in queries:
-        if len(all_results) >= required_count:
-            break
-        results = client.search(query.query, required_count)
+    # Use only the first query to trigger a single search session (max 10 API calls)
+    # The search client internally handles multiple search variations
+    if queries:
+        main_query = queries[0]
+        results = client.search(main_query.query, required_count)
         for r in results:
             if r.url not in seen_urls:
                 seen_urls.add(r.url)
                 all_results.append(r)
-    
-    # If we don't have enough results, try additional queries based on location preference
-    if len(all_results) < required_count:
-        if profile.location_preference == "egypt":
-            fallback_queries = [
-                f"internship Cairo Egypt {profile.track}",
-                f"تدريب صيفي مصر برمجة",
-                f"junior developer Egypt Cairo",
-                f"software internship Egypt 2024 2025",
-                f"Vodafone Egypt internship",
-                f"Orange Egypt graduate program",
-                f"tech internship Egypt",
-            ]
-        elif profile.location_preference == "remote":
-            fallback_queries = [
-                f"remote internship {profile.track} worldwide",
-                f"work from home internship software",
-                f"remote junior developer position",
-                f"virtual internship tech",
-            ]
-        elif profile.location_preference == "abroad":
-            fallback_queries = [
-                f"internship {profile.track} USA visa sponsorship",
-                f"internship Europe software",
-                f"internship UAE Dubai tech",
-                f"international internship program",
-            ]
-        else:
-            fallback_queries = [
-                f"{profile.track} internship 2024",
-                f"software engineer intern",
-                f"data science internship",
-            ]
-        
-        for fallback_query in fallback_queries:
-            if len(all_results) >= required_count:
-                break
-            results = client.search(fallback_query, required_count - len(all_results))
-            for r in results:
-                if r.url not in seen_urls:
-                    seen_urls.add(r.url)
-                    all_results.append(r)
     
     # Ensure we return exactly the required count (or all if less available)
     final_results = all_results[:required_count]

@@ -158,9 +158,10 @@ class LinkedInSerpAPIClient:
         """
         Search LinkedIn jobs via Google with site:linkedin.com/jobs.
         
-        Makes 10 searches with 8 results each.
-        Uses 10 SerpAPI credits total.
+        Makes maximum 10 searches with 8 results each.
+        Uses max 10 SerpAPI credits total.
         Returns combined deduplicated results.
+        Stops early if enough results are found.
         """
         # Simplify query for better results - keep only key terms
         words = query.lower().split()
@@ -198,11 +199,22 @@ class LinkedInSerpAPIClient:
             f'site:linkedin.com/jobs {base_query} internship {locations[1] if len(locations) > 1 else locations[0]}',
         ]
         
+        # Limit to maximum 10 searches
+        max_searches = 10
+        
         all_results = []
         seen_urls = set()
         credits_used = 0
         
-        for search_query in search_variations:
+        for search_query in search_variations[:max_searches]:
+            # Stop early if we have enough results
+            if len(all_results) >= limit:
+                break
+            
+            # Stop if we've used max credits
+            if credits_used >= max_searches:
+                break
+            
             self._rate_limit()
             credits_used += 1
             
