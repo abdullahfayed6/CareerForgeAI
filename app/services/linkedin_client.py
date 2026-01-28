@@ -200,7 +200,7 @@ class LinkedInSerpAPIClient:
         ]
         
         # Limit to maximum 10 searches
-        max_searches = 10
+        max_searches = 5
         
         all_results = []
         seen_urls = set()
@@ -222,7 +222,7 @@ class LinkedInSerpAPIClient:
                 "engine": "google",
                 "q": search_query.strip(),
                 "api_key": self.api_key,
-                "num": 8,  # 8 results per search
+                "num": 6,  # 8 results per search
                 "tbs": "qdr:m",  # Posted in last month
             }
             
@@ -275,7 +275,7 @@ class LinkedInSerpAPIClient:
                     if len(all_results) >= limit:
                         break
                 
-                logger.info(f"Search {credits_used}/10: Found {len(organic_results)} results")
+                logger.info(f"Search {credits_used}/5: Found {len(organic_results)} results")
                 
             except requests.RequestException as e:
                 logger.error(f"SerpAPI error: {e}")
