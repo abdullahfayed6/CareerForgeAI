@@ -71,6 +71,19 @@ class LifeStoryExplanation(BaseModel):
     concept_mapping: str = Field(description="Explanation of how story elements map to the technical concept")
 
 
+class PrerequisiteTopic(BaseModel):
+    """A prerequisite topic required before studying the main lecture."""
+    topic: str = Field(description="Prerequisite topic name")
+    why_needed: str = Field(description="How it directly supports understanding the lecture")
+    risk_if_missing: str = Field(description="What confusion or mistakes happen without it")
+
+
+class PrerequisiteKnowledge(BaseModel):
+    """Essential prerequisite knowledge before studying the lecture."""
+    why_prerequisites_matter: str = Field(description="Why missing foundations cause problems")
+    required_topics: List[PrerequisiteTopic] = Field(description="5 essential prerequisite topics")
+
+
 # Main Output Model
 class CareerTranslation(BaseModel):
     """Complete career translation output - strict JSON for FastAPI response."""
@@ -86,6 +99,9 @@ class CareerTranslation(BaseModel):
     )
     life_story_explanation: LifeStoryExplanation = Field(
         description="Real-life story that explains the concept intuitively"
+    )
+    prerequisite_knowledge: PrerequisiteKnowledge = Field(
+        description="5 essential topics required before studying this lecture"
     )
 
 

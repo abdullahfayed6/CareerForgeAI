@@ -16,6 +16,8 @@ from app.models.career_schemas import (
     IndustryUseCase,
     LectureInput,
     LifeStoryExplanation,
+    PrerequisiteKnowledge,
+    PrerequisiteTopic,
     ProductionChallenge,
     RealWorldRelevance,
     SkillsBuilt,
@@ -125,6 +127,36 @@ class CareerTranslatorAgent(BaseInterviewAgent):
                 "story_title": "The Restaurant Reservation",
                 "story": "Imagine you're organizing a dinner with 10 friends. You call the restaurant to make a reservation, but they need to know exactly how many people are coming. Some friends haven't confirmed yet, so you have to wait. Meanwhile, the restaurant can't prepare the right table size. Everyone is blocked waiting for information before they can proceed.",
                 "concept_mapping": "Just like waiting for all friends to confirm before the restaurant can prepare, systems often need to wait for all data or dependencies before processing. This is the core of synchronization and blocking operations in software."
+            },
+            "prerequisite_knowledge": {
+                "why_prerequisites_matter": "Without these foundations, learners will struggle to understand the core concepts and make avoidable mistakes in production.",
+                "required_topics": [
+                    {
+                        "topic": "Basic Programming Fundamentals",
+                        "why_needed": "Core syntax and logic flow are essential for understanding implementation",
+                        "risk_if_missing": "Unable to read or write code examples, complete confusion"
+                    },
+                    {
+                        "topic": "Data Structures Basics",
+                        "why_needed": "Understanding how data is organized is fundamental to most concepts",
+                        "risk_if_missing": "Cannot understand performance implications or design choices"
+                    },
+                    {
+                        "topic": "Algorithm Complexity (Big O)",
+                        "why_needed": "Required to understand why certain approaches are better",
+                        "risk_if_missing": "Will write inefficient code without knowing why"
+                    },
+                    {
+                        "topic": "Problem Decomposition",
+                        "why_needed": "Breaking problems into smaller parts is essential for implementation",
+                        "risk_if_missing": "Overwhelmed by complexity, unable to start solving"
+                    },
+                    {
+                        "topic": "Basic Debugging Skills",
+                        "why_needed": "Needed to verify understanding through experimentation",
+                        "risk_if_missing": "Cannot troubleshoot when things don't work as expected"
+                    }
+                ]
             }
         }
     
@@ -316,6 +348,55 @@ class CareerTranslatorAgent(BaseInterviewAgent):
             concept_mapping=story_data.get("concept_mapping", "The story elements directly map to the technical concept, helping you understand the intuition behind the engineering principles."),
         )
         
+        # Build prerequisite_knowledge
+        prereq_data = parsed.get("prerequisite_knowledge", {})
+        required_topics_data = prereq_data.get("required_topics", [])
+        required_topics = []
+        for topic in required_topics_data:
+            if isinstance(topic, dict):
+                required_topics.append(PrerequisiteTopic(
+                    topic=topic.get("topic", "Foundational Topic"),
+                    why_needed=topic.get("why_needed", "Required for understanding"),
+                    risk_if_missing=topic.get("risk_if_missing", "Confusion and errors"),
+                ))
+        # Ensure we have at least some default prerequisites
+        if not required_topics:
+            required_topics = [
+                PrerequisiteTopic(
+                    topic="Basic Programming Fundamentals",
+                    why_needed="Core syntax and logic flow are essential",
+                    risk_if_missing="Unable to read or write code examples"
+                ),
+                PrerequisiteTopic(
+                    topic="Data Structures Basics",
+                    why_needed="Understanding data organization is fundamental",
+                    risk_if_missing="Cannot understand performance implications"
+                ),
+                PrerequisiteTopic(
+                    topic="Algorithm Complexity (Big O)",
+                    why_needed="Required to understand efficiency trade-offs",
+                    risk_if_missing="Will write inefficient code"
+                ),
+                PrerequisiteTopic(
+                    topic="Problem Decomposition",
+                    why_needed="Breaking problems into parts is essential",
+                    risk_if_missing="Overwhelmed by complexity"
+                ),
+                PrerequisiteTopic(
+                    topic="Basic Debugging Skills",
+                    why_needed="Needed to verify understanding",
+                    risk_if_missing="Cannot troubleshoot issues"
+                ),
+            ]
+        
+        prerequisite_knowledge = PrerequisiteKnowledge(
+            why_prerequisites_matter=prereq_data.get(
+                "why_prerequisites_matter",
+                "Without these foundations, learners will struggle to understand core concepts and make avoidable production mistakes."
+            ),
+            required_topics=required_topics,
+        )
+        
         return CareerTranslation(
             lecture_topic=parsed.get("lecture_topic", "Unknown Topic"),
             real_world_relevance=real_world_relevance,
@@ -326,6 +407,7 @@ class CareerTranslatorAgent(BaseInterviewAgent):
             advanced_challenge=advanced_challenge,
             production_challenges=production_challenges,
             life_story_explanation=life_story_explanation,
+            prerequisite_knowledge=prerequisite_knowledge,
         )
 
 

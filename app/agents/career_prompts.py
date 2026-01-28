@@ -28,6 +28,7 @@ Translate the lecture into:
 6) Advanced industry challenge
 7) Production challenges (7 real engineering problems)
 8) Life story explanation (intuitive real-life story)
+9) Prerequisite knowledge (5 essential foundations)
 
 Think like a senior engineer mentoring a junior in a real company.
 
@@ -154,6 +155,37 @@ Return ONLY valid JSON with no additional text, no markdown, no code blocks:
     "story_title": "Short relatable title that captures the essence of the concept",
     "story": "A simple real-life story (3-5 paragraphs) that explains the lecture concept using everyday situations. Use normal life scenarios like: friends making decisions, business owners solving problems, traffic patterns, shopping experiences, teamwork challenges, planning events, managing risks, etc. The story should feel natural and human, NOT like a textbook analogy. Avoid all technical jargon inside the story. The reader should understand the concept emotionally and intuitively through the story.",
     "concept_mapping": "Clear explanation (2-3 sentences) that maps story elements back to the technical concept. Example: 'In the story, the friends waiting for everyone to arrive before ordering represents... which is exactly how [technical concept] works when...'"
+  }},
+
+  "prerequisite_knowledge": {{
+    "why_prerequisites_matter": "Short explanation of why missing these foundations causes confusion, errors, or production mistakes when learning this topic",
+    "required_topics": [
+      {{
+        "topic": "First essential prerequisite topic",
+        "why_needed": "How this directly supports understanding the lecture - specific connection",
+        "risk_if_missing": "What confusion, bugs, or mistakes happen without this knowledge"
+      }},
+      {{
+        "topic": "Second essential prerequisite topic",
+        "why_needed": "Direct conceptual dependency explanation",
+        "risk_if_missing": "Specific problems learner will face"
+      }},
+      {{
+        "topic": "Third essential prerequisite topic",
+        "why_needed": "How it builds foundation for this topic",
+        "risk_if_missing": "What goes wrong without it"
+      }},
+      {{
+        "topic": "Fourth essential prerequisite topic",
+        "why_needed": "Connection to the main lecture concept",
+        "risk_if_missing": "Resulting confusion or errors"
+      }},
+      {{
+        "topic": "Fifth essential prerequisite topic",
+        "why_needed": "Why this foundation is critical",
+        "risk_if_missing": "What breaks without this understanding"
+      }}
+    ]
   }}
 }}
 
@@ -192,6 +224,24 @@ The concept_mapping MUST:
 • Clearly connect story elements → Technical concept
 • Help the learner bridge intuition with engineering thinking
 • Be concise but complete (2-3 sentences)
+
+----------------------------------------------------
+PREREQUISITE KNOWLEDGE REQUIREMENTS
+----------------------------------------------------
+The 5 prerequisites MUST be:
+• Truly ESSENTIAL foundations (not "nice to have")
+• Conceptual dependencies that directly affect understanding
+• Topics that reduce learning struggle and production mistakes
+
+RULES:
+• Think like a senior engineer helping a junior avoid confusion
+• Choose only necessary foundations, not a full curriculum
+• Focus on what causes real problems if skipped
+
+Each prerequisite must have:
+1) Topic name - clear and specific
+2) Why needed - direct connection to this lecture
+3) Risk if missing - specific confusion or mistakes that result
 
 ----------------------------------------------------
 BEHAVIOR RULES
