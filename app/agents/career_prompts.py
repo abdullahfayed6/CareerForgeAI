@@ -25,7 +25,8 @@ Translate the lecture into:
 3) Company-style practical tasks  
 4) Skills developed  
 5) Career impact  
-6) Advanced industry challenge  
+6) Advanced industry challenge
+7) Production challenges (7 real engineering problems)
 
 Think like a senior engineer mentoring a junior in a real company.
 
@@ -108,8 +109,67 @@ Return ONLY valid JSON with no additional text, no markdown, no code blocks:
   "advanced_challenge": {{
     "title": "Industry-level challenge title",
     "description": "Detailed description of a hard real-world extension problem that would challenge even experienced engineers"
-  }}
+  }},
+
+  "production_challenges": [
+    {{
+      "challenge": "First common real-world issue engineers face with this topic",
+      "why_it_happens": "Technical, system, scale, or data reason behind the issue",
+      "professional_solution": "How experienced engineers solve or prevent it in production (tools, design decisions, best practices)"
+    }},
+    {{
+      "challenge": "Second production challenge - scale failure or performance bottleneck",
+      "why_it_happens": "Root cause in real systems",
+      "professional_solution": "Industry-standard solution with specific tools/techniques"
+    }},
+    {{
+      "challenge": "Third production challenge - data quality or edge case issue",
+      "why_it_happens": "Why this happens in production but not in dev/test",
+      "professional_solution": "Professional approach to handle it"
+    }},
+    {{
+      "challenge": "Fourth production challenge - system design mistake",
+      "why_it_happens": "Common architectural or design oversight",
+      "professional_solution": "Best practice or pattern to avoid it"
+    }},
+    {{
+      "challenge": "Fifth production challenge - integration or compatibility issue",
+      "why_it_happens": "Real-world integration complexity",
+      "professional_solution": "How teams handle this at scale"
+    }},
+    {{
+      "challenge": "Sixth production challenge - cost or infrastructure problem",
+      "why_it_happens": "Resource constraints in real deployments",
+      "professional_solution": "Cost-effective engineering solution"
+    }},
+    {{
+      "challenge": "Seventh production challenge - monitoring, debugging, or maintenance issue",
+      "why_it_happens": "Operational complexity in production",
+      "professional_solution": "Observability and operational best practices"
+    }}
+  ]
 }}
+
+----------------------------------------------------
+PRODUCTION CHALLENGES REQUIREMENTS
+----------------------------------------------------
+The 7 production challenges MUST be:
+• Real engineering problems (NOT academic difficulties or theory confusion)
+• Specific to production environments at scale
+• Include problems like:
+  - Scale failures
+  - Performance bottlenecks  
+  - Data quality issues
+  - Edge cases that break systems
+  - System design mistakes
+  - Integration issues
+  - Cost or infrastructure problems
+  - Monitoring/debugging difficulties
+
+Each challenge must have:
+1) The actual problem engineers encounter
+2) WHY it happens in real systems (root cause)
+3) HOW professionals handle it (specific tools, patterns, best practices)
 
 ----------------------------------------------------
 BEHAVIOR RULES
@@ -119,4 +179,5 @@ BEHAVIOR RULES
 • Focus on career acceleration, not education
 • Be specific with company names, tools, and real scenarios
 • Tasks should be completable and measurable
-• Think production systems, not toy examples"""
+• Think production systems, not toy examples
+• Production challenges must be real issues you'd encounter at companies like Google, Netflix, Uber, etc."""

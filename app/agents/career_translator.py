@@ -15,6 +15,7 @@ from app.models.career_schemas import (
     CompanyStyleTask,
     IndustryUseCase,
     LectureInput,
+    ProductionChallenge,
     RealWorldRelevance,
     SkillsBuilt,
 )
@@ -81,7 +82,44 @@ class CareerTranslatorAgent(BaseInterviewAgent):
             "advanced_challenge": {
                 "title": "Scale the Solution",
                 "description": "Extend the implementation to handle enterprise-scale requirements"
-            }
+            },
+            "production_challenges": [
+                {
+                    "challenge": "Scale failure under high traffic",
+                    "why_it_happens": "System not designed for load spikes",
+                    "professional_solution": "Implement auto-scaling and load balancing"
+                },
+                {
+                    "challenge": "Performance bottleneck in critical path",
+                    "why_it_happens": "Unoptimized queries or algorithms",
+                    "professional_solution": "Profile, optimize, and add caching layers"
+                },
+                {
+                    "challenge": "Data quality issues in production",
+                    "why_it_happens": "Edge cases not covered in testing",
+                    "professional_solution": "Add data validation and monitoring"
+                },
+                {
+                    "challenge": "System design limitation",
+                    "why_it_happens": "Initial architecture didn't anticipate growth",
+                    "professional_solution": "Refactor with scalable patterns"
+                },
+                {
+                    "challenge": "Integration compatibility issues",
+                    "why_it_happens": "Third-party API changes or version mismatches",
+                    "professional_solution": "Use adapters and version contracts"
+                },
+                {
+                    "challenge": "Infrastructure cost overrun",
+                    "why_it_happens": "Inefficient resource utilization",
+                    "professional_solution": "Implement cost monitoring and right-sizing"
+                },
+                {
+                    "challenge": "Debugging complexity in production",
+                    "why_it_happens": "Lack of observability",
+                    "professional_solution": "Add structured logging and distributed tracing"
+                }
+            ]
         }
     
     async def translate(self, lecture_input: LectureInput) -> CareerTranslation:
@@ -214,6 +252,56 @@ class CareerTranslatorAgent(BaseInterviewAgent):
             description=challenge_data.get("description", "Scale and optimize the solution"),
         )
         
+        # Build production_challenges
+        prod_challenges_data = parsed.get("production_challenges", [])
+        production_challenges = []
+        for pc in prod_challenges_data:
+            if isinstance(pc, dict):
+                production_challenges.append(ProductionChallenge(
+                    challenge=pc.get("challenge", "Production issue"),
+                    why_it_happens=pc.get("why_it_happens", "System complexity"),
+                    professional_solution=pc.get("professional_solution", "Engineering best practices"),
+                ))
+        # Ensure we have at least some default production challenges
+        if not production_challenges:
+            production_challenges = [
+                ProductionChallenge(
+                    challenge="Scale failure under high traffic",
+                    why_it_happens="System not designed for load spikes",
+                    professional_solution="Implement auto-scaling and load balancing"
+                ),
+                ProductionChallenge(
+                    challenge="Performance bottleneck",
+                    why_it_happens="Unoptimized code paths",
+                    professional_solution="Profile and optimize critical sections"
+                ),
+                ProductionChallenge(
+                    challenge="Data quality issues",
+                    why_it_happens="Edge cases in production data",
+                    professional_solution="Add validation and monitoring"
+                ),
+                ProductionChallenge(
+                    challenge="System design limitation",
+                    why_it_happens="Architecture didn't anticipate growth",
+                    professional_solution="Refactor with scalable patterns"
+                ),
+                ProductionChallenge(
+                    challenge="Integration issues",
+                    why_it_happens="Third-party API changes",
+                    professional_solution="Use adapters and version contracts"
+                ),
+                ProductionChallenge(
+                    challenge="Infrastructure cost overrun",
+                    why_it_happens="Inefficient resource usage",
+                    professional_solution="Implement cost monitoring"
+                ),
+                ProductionChallenge(
+                    challenge="Debugging complexity",
+                    why_it_happens="Lack of observability",
+                    professional_solution="Add structured logging and tracing"
+                ),
+            ]
+        
         return CareerTranslation(
             lecture_topic=parsed.get("lecture_topic", "Unknown Topic"),
             real_world_relevance=real_world_relevance,
@@ -222,6 +310,7 @@ class CareerTranslatorAgent(BaseInterviewAgent):
             skills_built=skills_built,
             career_impact=career_impact,
             advanced_challenge=advanced_challenge,
+            production_challenges=production_challenges,
         )
 
 

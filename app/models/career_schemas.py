@@ -57,6 +57,13 @@ class AdvancedChallenge(BaseModel):
     description: str = Field(description="Hard real-world extension problem")
 
 
+class ProductionChallenge(BaseModel):
+    """Real production engineering challenge."""
+    challenge: str = Field(description="Common real-world issue engineers face with this topic")
+    why_it_happens: str = Field(description="Technical, system, scale, or data reason behind the issue")
+    professional_solution: str = Field(description="How experienced engineers solve or prevent it in production")
+
+
 # Main Output Model
 class CareerTranslation(BaseModel):
     """Complete career translation output - strict JSON for FastAPI response."""
@@ -67,6 +74,9 @@ class CareerTranslation(BaseModel):
     skills_built: SkillsBuilt
     career_impact: CareerImpact
     advanced_challenge: AdvancedChallenge
+    production_challenges: List[ProductionChallenge] = Field(
+        description="7 most common real engineering challenges related to this topic"
+    )
 
 
 # API Request/Response Models
