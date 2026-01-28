@@ -18,6 +18,17 @@ class UserInput(BaseModel):
     notes: str | None = None
 
 
+class TaskSimulationInput(BaseModel):
+    company_name: str = Field(min_length=1)
+    task_title: str = Field(min_length=1)
+
+
+class TaskSimulationOutput(BaseModel):
+    company_name: str
+    task_title: str
+    simulation: str
+
+
 class SkillBuckets(BaseModel):
     hard: list[str] = Field(default_factory=list)
     tools: list[str] = Field(default_factory=list)

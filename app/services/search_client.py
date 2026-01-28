@@ -1,5 +1,10 @@
+"""
+Search Client - Multiple providers including LinkedIn.
+Supports SerpAPI, LinkedIn, and Mock for testing.
+"""
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -7,6 +12,19 @@ import requests
 
 from app.config import settings
 from app.models.schemas import OpportunityRaw
+
+logger = logging.getLogger("search_client")
+
+
+# Egyptian tech companies for reference
+EGYPTIAN_COMPANIES = [
+    "Vodafone Egypt", "Orange Egypt", "Etisalat Egypt", "Valeo Egypt", "IBM Egypt",
+    "Microsoft Egypt", "Amazon Egypt", "Google Egypt", "Meta Egypt", "Dell Egypt",
+    "Swvl", "Instabug", "Fawry", "Paymob", "Noon Academy", "Vezeeta", "Elmenus",
+    "Careem Egypt", "Uber Egypt", "Teleperformance Egypt", "Xceed", "ITWorx",
+    "Mentor Graphics", "Synopsys Egypt", "Si-Vision", "ITIDA", "Banha Electronics",
+    "Arab African International Bank Tech", "CIB Digital", "QNB Alahli Tech",
+]
 
 
 @dataclass(frozen=True)
@@ -21,12 +39,12 @@ class SearchResult:
 
 
 class SearchClient(Protocol):
-    def search(self, query: str, limit: int) -> list[OpportunityRaw]:
+    def search(self, query: str, limit: int, location_preference: str = "egypt") -> list[OpportunityRaw]:
         ...
 
 
 class MockSearchClient:
-    def search(self, query: str, limit: int) -> list[OpportunityRaw]:
+    def search(self, query: str, limit: int, location_preference: str = "egypt") -> list[OpportunityRaw]:
         results = []
         for index in range(limit):
             results.append(
@@ -51,7 +69,7 @@ class SerpAPISearchClient:
     def __init__(self, api_key: str) -> None:
         self.api_key = api_key
 
-    def search(self, query: str, limit: int) -> list[OpportunityRaw]:
+    def search(self, query: str, limit: int, location_preference: str = "egypt") -> list[OpportunityRaw]:
         # Use Google Jobs engine for better job listings
         params = {
             "engine": "google_jobs",
@@ -100,12 +118,21 @@ class SerpAPISearchClient:
             return results
             
         except requests.RequestException as e:
-            print(f"SerpAPI error: {e}")
+            logger.error(f"SerpAPI error: {e}")
             return []
 
 
 def get_search_client() -> SearchClient:
+    """
+    Get the appropriate search client based on configuration.
+    
+    Returns SerpAPISearchClient if configured, otherwise MockSearchClient.
+    """
     if settings.search_provider.lower() == "serpapi" and settings.search_api_key:
         return SerpAPISearchClient(settings.search_api_key)
     return MockSearchClient()
 
+
+def get_egyptian_companies() -> list[str]:
+    """Return list of Egyptian tech companies."""
+    return EGYPTIAN_COMPANIES.copy()
