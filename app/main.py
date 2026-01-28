@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.match import router as match_router
 from app.api.interview import router as interview_router
 from app.api.career import router as career_router
+from app.api.task_simulation import router as task_simulation_router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -45,6 +46,7 @@ app.add_middleware(
 app.include_router(match_router)
 app.include_router(interview_router)
 app.include_router(career_router)
+app.include_router(task_simulation_router)
 
 
 @app.get("/")
@@ -64,6 +66,10 @@ async def root():
             "match": {
                 "description": "Opportunity matching",
                 "endpoint": "/api/match"
+            },
+            "task_simulation": {
+                "description": "Generate internship task scenarios",
+                "endpoint": "/task-simulation"
             }
         },
         "documentation": "/docs",
