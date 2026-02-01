@@ -527,9 +527,9 @@ async def search_jobs_live(request: LiveJobSearchRequest) -> LiveJobSearchRespon
     description="Quick job search with query parameters"
 )
 async def quick_job_search(
-    q: str = Query(..., description="Search query", example="Python Developer"),
-    location: str = Query(default="", description="Location", example="Remote"),
-    job_type: str = Query(default="", description="Job type", example="internship"),
+    q: str = Query(..., description="Search query", examples=["Python Developer", "Data Analyst", "Frontend Developer"]),
+    location: str = Query(default="", description="Location", examples=["Remote", "New York", "London"]),
+    job_type: str = Query(default="", description="Job type", examples=["internship", "junior", "entry-level"]),
     limit: int = Query(default=10, ge=1, le=50)
 ) -> LiveJobSearchResponse:
     """Quick job search with GET request."""
@@ -594,7 +594,7 @@ async def get_freelance_search_urls(request: FreelanceURLsRequest) -> FreelanceS
     description="Quick freelance platform URLs with query parameters"
 )
 async def quick_freelance_urls(
-    skills: str = Query(..., description="Comma-separated skills", example="Python,Data Analysis,Web Scraping")
+    skills: str = Query(..., description="Comma-separated skills", examples=["Python,Data Analysis,Web Scraping", "JavaScript,React,Node.js", "Machine Learning,TensorFlow"])
 ) -> FreelanceSearchResponse:
     """Quick freelance URLs with GET request."""
     try:
