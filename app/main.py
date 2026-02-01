@@ -11,6 +11,7 @@ from app.api.career import router as career_router
 from app.api.task_simulation import router as task_simulation_router
 from app.api.recap import router as recap_router
 from app.api.recommender import router as recommender_router
+from app.api.cv import router as cv_router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -36,12 +37,20 @@ Matches students with internship opportunities based on their profile and skills
 Provides perfect summaries, study tips, learning tracks, and quick reference materials
 for any lecture or topic. Includes flashcards, practice exercises, and milestones.
 
-### 5. Recommender Multi-Agent (NEW)
-AI-powered recommendation system with two specialized agents:
+### 5. Recommender Multi-Agent
+AI-powered recommendation system with specialized agents:
 - **Internship Recommender**: Personalized internship matching with skill gap analysis
 - **Event Recommender**: Hackathons, workshops, conferences, and competitions
+- **Course Recommender**: Popular courses and certifications for any topic
+- **Skills/Tools Recommender**: Related skills and tools for career development
+
+### 6. CV Creator Agent (NEW)
+AI-powered CV generation system that:
+- Collects skills from interviews, courses, projects, and experience
+- Allows students to add their own skills
+- Generates professional, ATS-friendly CVs
     """,
-    version="1.1.0",
+    version="1.2.0",
 )
 
 # Add CORS middleware
@@ -60,6 +69,7 @@ app.include_router(career_router)
 app.include_router(task_simulation_router)
 app.include_router(recap_router)
 app.include_router(recommender_router)
+app.include_router(cv_router)
 
 
 @app.get("/")
@@ -95,12 +105,22 @@ async def root():
                 }
             },
             "recommender": {
-                "description": "AI-powered recommendations (internships & events)",
+                "description": "AI-powered recommendations",
                 "endpoints": {
                     "internships": "/api/recommend/internships",
                     "events": "/api/recommend/events",
-                    "all": "/api/recommend/all",
-                    "hackathons": "/api/recommend/hackathons"
+                    "courses": "/api/recommend/courses",
+                    "skills_tools": "/api/recommend/skills-tools",
+                    "all": "/api/recommend/all"
+                }
+            },
+            "cv_creator": {
+                "description": "AI-powered CV generation with skill collection",
+                "endpoints": {
+                    "collect_skills": "/api/cv/skills/collect",
+                    "add_skills": "/api/cv/skills/add",
+                    "generate_cv": "/api/cv/generate",
+                    "generate_summary": "/api/cv/summary"
                 }
             }
         },
