@@ -12,6 +12,7 @@ from app.api.task_simulation import router as task_simulation_router
 from app.api.recap import router as recap_router
 from app.api.recommender import router as recommender_router
 from app.api.cv import router as cv_router
+from app.api.advisor import router as advisor_router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -44,13 +45,21 @@ AI-powered recommendation system with specialized agents:
 - **Course Recommender**: Popular courses and certifications for any topic
 - **Skills/Tools Recommender**: Related skills and tools for career development
 
-### 6. CV Creator Agent (NEW)
+### 6. CV Creator Agent
 AI-powered CV generation system that:
 - Collects skills from interviews, courses, projects, and experience
 - Allows students to add their own skills
 - Generates professional, ATS-friendly CVs
+
+### 7. Advisor Agent (NEW) - Student Life & Tech Mentor
+Personal AI mentor that analyzes student state and provides advice on:
+- 📘 Learning & Study strategies
+- 💻 Technical Career Growth
+- ⏳ Productivity & Habits
+- 🧠 Mindset & Motivation
+- 🌿 Life Balance (health, stress, focus)
     """,
-    version="1.2.0",
+    version="1.3.0",
 )
 
 # Add CORS middleware
@@ -70,6 +79,7 @@ app.include_router(task_simulation_router)
 app.include_router(recap_router)
 app.include_router(recommender_router)
 app.include_router(cv_router)
+app.include_router(advisor_router)
 
 
 @app.get("/")
@@ -77,7 +87,7 @@ async def root():
     """Root endpoint with API information."""
     return {
         "message": "Education Platform - Multi-Agent System",
-        "version": "1.1.0",
+        "version": "1.3.0",
         "services": {
             "career_translator": {
                 "description": "Convert lectures to industry value",
@@ -121,6 +131,16 @@ async def root():
                     "add_skills": "/api/cv/skills/add",
                     "generate_cv": "/api/cv/generate",
                     "generate_summary": "/api/cv/summary"
+                }
+            },
+            "advisor": {
+                "description": "Personal AI mentor for learning, career, productivity, mindset, and life balance",
+                "endpoints": {
+                    "full_advice": "/api/advisor/advice",
+                    "quick_check_in": "/api/advisor/check-in",
+                    "learning_advice": "/api/advisor/learning",
+                    "productivity_advice": "/api/advisor/productivity",
+                    "mindset_advice": "/api/advisor/mindset"
                 }
             }
         },
