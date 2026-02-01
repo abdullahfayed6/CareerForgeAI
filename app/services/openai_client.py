@@ -1,26 +1,51 @@
 """
-OpenAI Client for AI-powered job matching reasons.
+LLM Client for AI-powered job matching reasons.
 Generates personalized explanations for why a job matches a candidate.
+Supports multiple providers: OpenAI, Gemini, Groq.
 """
 from __future__ import annotations
 
 import json
 import logging
-from typing import Any
-
-import openai
+from typing import Any, Optional, Union
 
 from app.config import settings
+from app.providers import LLMProvider, LLMResponse, ProviderType, get_provider
+from app.providers.base import Message
 
-logger = logging.getLogger("openai_client")
+logger = logging.getLogger("llm_client")
 
 
-class OpenAIClient:
-    """OpenAI client for generating AI-powered match reasons."""
+class LLMClient:
+    """LLM client for generating AI-powered match reasons. Supports multiple providers."""
     
-    def __init__(self, api_key: str):
-        self.client = openai.OpenAI(api_key=api_key)
-        self.model = "gpt-4o-mini"  # Fast and cost-effective
+    def __init__(
+        self,
+        provider: Optional[Union[str, ProviderType, LLMProvider]] = None,
+        model: Optional[str] = None,
+    ):
+        """
+        Initialize the LLM client.
+        
+        Args:
+            provider: Provider type ("openai", "gemini", "groq") or LLMProvider instance
+            model: Optional model override
+        """
+        if isinstance(provider, LLMProvider):
+            self._provider = provider
+        else:
+            self._provider = get_provider(
+                provider_type=provider,
+                model=model,
+            )
+    
+    @property
+    def provider(self) -> LLMProvider:
+        return self._provider
+    
+    @property
+    def model(self) -> str:
+        return self._provider.model
     
     def generate_match_reasons(
         self,
@@ -65,17 +90,14 @@ Return ONLY a JSON array of strings, like:
 """
 
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are a helpful career advisor. Return only valid JSON."},
-                    {"role": "user", "content": prompt}
-                ],
+            response = self._provider.complete(
+                prompt=prompt,
+                system_prompt="You are a helpful career advisor. Return only valid JSON.",
                 temperature=0.7,
                 max_tokens=300,
             )
             
-            content = response.choices[0].message.content.strip()
+            content = response.content.strip()
             
             # Parse JSON response
             # Handle potential markdown code blocks
@@ -94,7 +116,7 @@ Return ONLY a JSON array of strings, like:
             return self._fallback_reasons(score, job_title, company)
             
         except Exception as e:
-            logger.error(f"OpenAI error: {e}")
+            logger.error(f"LLM error ({self._provider.provider_type.value}): {e}")
             return self._fallback_reasons(score, job_title, company)
     
     def _fallback_reasons(self, score: int, job_title: str, company: str) -> list[str]:
@@ -175,17 +197,14 @@ Return ONLY valid JSON in this exact format:
 """
 
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are a helpful career advisor. Return only valid JSON."},
-                    {"role": "user", "content": prompt}
-                ],
+            response = self._provider.complete(
+                prompt=prompt,
+                system_prompt="You are a helpful career advisor. Return only valid JSON.",
                 temperature=0.5,
                 max_tokens=400,
             )
             
-            content = response.choices[0].message.content.strip()
+            content = response.content.strip()
             
             # Handle potential markdown code blocks
             if content.startswith("```"):
@@ -206,13 +225,41 @@ Return ONLY valid JSON in this exact format:
             return None
             
         except Exception as e:
-            logger.error(f"OpenAI scoring error: {e}")
+            logger.error(f"LLM scoring error ({self._provider.provider_type.value}): {e}")
             return None
 
 
-def get_openai_client() -> OpenAIClient | None:
-    """Get OpenAI client if API key is configured."""
+# Backward compatibility alias
+OpenAIClient = LLMClient
+
+
+def get_llm_client(
+    provider: Optional[Union[str, ProviderType]] = None,
+    model: Optional[str] = None,
+) -> LLMClient | None:
+    """
+    Get an LLM client for the specified or configured provider.
+    
+    Args:
+        provider: Provider type ("openai", "gemini", "groq"). Uses settings if None.
+        model: Optional model override
+        
+    Returns:
+        LLMClient instance or None if no API key configured
+    """
+    try:
+        return LLMClient(provider=provider, model=model)
+    except ValueError as e:
+        logger.warning(f"LLM client creation failed: {e}")
+        return None
+
+
+def get_openai_client() -> LLMClient | None:
+    """
+    Get OpenAI client if API key is configured.
+    DEPRECATED: Use get_llm_client() instead.
+    """
     if settings.openai_api_key:
-        return OpenAIClient(settings.openai_api_key)
+        return LLMClient(provider="openai")
     logger.warning("OpenAI API key not configured")
     return None

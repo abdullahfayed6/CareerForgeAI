@@ -13,5 +13,19 @@ langgraph
 langchain-core
 langchain-openai
 
+# OpenAI SDK (required)
+openai
+
+# Optional: Additional LLM Providers
+# Uncomment the providers you want to use:
+
+# Google Gemini
+# google-generativeai
+# langchain-google-genai
+
+# Groq (fast inference)
+# groq
+# langchain-groq
+
 # Environment variables
 python-dotenv

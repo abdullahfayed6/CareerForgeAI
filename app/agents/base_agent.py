@@ -5,12 +5,13 @@ import json
 import logging
 import re
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_openai import ChatOpenAI
+from langchain_core.language_models.chat_models import BaseChatModel
 
 from app.config import settings
+from app.providers import get_langchain_llm, ProviderType
 
 logger = logging.getLogger(__name__)
 
@@ -20,18 +21,27 @@ class BaseInterviewAgent(ABC):
     
     def __init__(
         self,
-        model: str = "gpt-4o-mini",
+        model: Optional[str] = None,
         temperature: float = 0.7,
-        llm: Optional[ChatOpenAI] = None,
+        llm: Optional[BaseChatModel] = None,
+        provider: Optional[Union[str, ProviderType]] = None,
     ):
-        """Initialize the agent with an LLM."""
+        """
+        Initialize the agent with an LLM.
+        
+        Args:
+            model: Model name to use. If None, uses provider default
+            temperature: Temperature for generation
+            llm: Optional pre-configured LangChain LLM
+            provider: LLM provider ("openai", "gemini", "groq"). If None, uses settings
+        """
         if llm:
             self.llm = llm
         else:
-            self.llm = ChatOpenAI(
+            self.llm = get_langchain_llm(
+                provider_type=provider,
                 model=model,
                 temperature=temperature,
-                api_key=settings.openai_api_key,
             )
     
     @abstractmethod
