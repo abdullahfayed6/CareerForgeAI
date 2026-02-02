@@ -15,6 +15,10 @@ class ProviderType(str, Enum):
     OPENAI = "openai"
     GEMINI = "gemini"
     GROQ = "groq"
+    COHERE = "cohere"
+    ANTHROPIC = "anthropic"
+    OLLAMA = "ollama"
+    MISTRAL = "mistral"
     
     @classmethod
     def from_string(cls, value: str) -> "ProviderType":

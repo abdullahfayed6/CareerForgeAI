@@ -13,6 +13,10 @@ from .base import LLMProvider, ProviderType
 from .openai_provider import OpenAIProvider
 from .gemini_provider import GeminiProvider
 from .groq_provider import GroqProvider
+from .cohere_provider import CohereProvider
+from .anthropic_provider import AnthropicProvider
+from .ollama_provider import OllamaProvider
+from .mistral_provider import MistralProvider
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +83,34 @@ def get_provider(
             temperature=temperature,
             max_tokens=max_tokens,
         )
+    elif provider_type == ProviderType.COHERE:
+        return CohereProvider(
+            api_key=api_key,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        )
+    elif provider_type == ProviderType.ANTHROPIC:
+        return AnthropicProvider(
+            api_key=api_key,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        )
+    elif provider_type == ProviderType.OLLAMA:
+        return OllamaProvider(
+            api_key=api_key,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        )
+    elif provider_type == ProviderType.MISTRAL:
+        return MistralProvider(
+            api_key=api_key,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        )
     else:
         raise ValueError(f"Unknown provider type: {provider_type}")
 
@@ -91,6 +123,14 @@ def _get_api_key_for_provider(provider_type: ProviderType) -> Optional[str]:
         return settings.gemini_api_key
     elif provider_type == ProviderType.GROQ:
         return settings.groq_api_key
+    elif provider_type == ProviderType.COHERE:
+        return getattr(settings, 'cohere_api_key', None)
+    elif provider_type == ProviderType.ANTHROPIC:
+        return getattr(settings, 'anthropic_api_key', None)
+    elif provider_type == ProviderType.OLLAMA:
+        return ""  # Ollama doesn't require API key
+    elif provider_type == ProviderType.MISTRAL:
+        return getattr(settings, 'mistral_api_key', None)
     return None
 
 
