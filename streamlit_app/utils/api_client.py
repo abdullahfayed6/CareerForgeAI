@@ -156,6 +156,32 @@ class APIClient:
         )
         return self._handle_response(response)
     
+    # ============ Project Recommender Endpoints ============
+    
+    def get_project_recommendations(
+        self,
+        topic: str,
+        current_level: str = "intermediate",
+        time_available: str = "moderate",
+        focus_on_portfolio: bool = True,
+        max_projects: int = 6,
+    ) -> Dict[str, Any]:
+        """Get practical project recommendations for a topic."""
+        payload = {
+            "topic": topic,
+            "current_level": current_level,
+            "time_available": time_available,
+            "focus_on_portfolio": focus_on_portfolio,
+            "max_projects": max_projects,
+        }
+        
+        response = requests.post(
+            f"{self.base_url}/project/recommend",
+            json=payload,
+            timeout=self.timeout,
+        )
+        return self._handle_response(response)
+    
     # ============ Health Check ============
     
     def health_check(self) -> bool:

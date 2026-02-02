@@ -42,6 +42,7 @@ def main():
         - 🎯 **Career** - Translate lectures
         - 🔍 **Match** - Find opportunities
         - 🏢 **Tasks** - Simulate work tasks
+        - 💼 **Projects** - Build portfolio
         """)
         
         st.markdown("---")
@@ -52,6 +53,7 @@ def main():
         - Understand career value of your courses
         - Find matching internship opportunities
         - Experience real-world tasks
+        - Build portfolio-ready projects
         """)
     
     # Main content
@@ -63,7 +65,7 @@ def main():
     # Welcome section
     st.markdown("## Welcome!")
     st.markdown("""
-    This multi-agent system provides four powerful services to accelerate your career journey.
+    This multi-agent system provides five powerful services to accelerate your career journey.
     Select a service from the sidebar navigation or explore the options below.
     """)
     
@@ -98,6 +100,21 @@ def main():
         """)
         if st.button("Find Opportunities →", key="nav_match"):
             st.switch_page("pages/3_Match.py")
+        
+        st.markdown("---")
+        
+        st.markdown("### 💼 Project Builder")
+        st.markdown("""
+        Get hands-on, portfolio-ready projects with professional GitHub guidance.
+        
+        **Features:**
+        - Beginner → Advanced projects
+        - GitHub repository structuring
+        - YouTube build tutorials
+        - Employability focused
+        """)
+        if st.button("Build Projects →", key="nav_projects"):
+            st.switch_page("pages/5_Project_Builder.py")
     
     with col2:
         st.markdown("### 🎯 Career Translator")
