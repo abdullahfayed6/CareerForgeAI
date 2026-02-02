@@ -191,12 +191,112 @@ Return valid JSON:
     "conferences": [],
     "competitions": [],
     "meetups": [],
+    "recommended_projects": [
+        {{
+            "name": "Project Name",
+            "level": "beginner|intermediate|advanced",
+            "description": "Brief description",
+            "what_you_will_build": "Detailed explanation of what student will create",
+            "skills_gained": ["Skill 1", "Skill 2", "Skill 3"],
+            "real_work_connection": "How this mirrors real industry work",
+            "cv_value": "Why this is valuable for CV/portfolio",
+            "relevant_roles": ["Software Engineer", "Data Scientist"],
+            "tech_stack": ["Python", "React", "PostgreSQL"],
+            "estimated_duration": "2-3 weeks",
+            "github_guidance": {{
+                "repo_name": "professional-repo-name",
+                "folder_structure": "/src\\n/docs\\n/tests\\nREADME.md\\nrequirements.txt\\n.gitignore",
+                "readme_should_contain": [
+                    "Project Overview",
+                    "Problem Statement",
+                    "Features",
+                    "Tech Stack",
+                    "Setup Instructions",
+                    "Usage Examples",
+                    "Screenshots/Demo",
+                    "Future Improvements"
+                ],
+                "professional_practices": [
+                    "Write clear, descriptive commit messages",
+                    "Use feature branches for development",
+                    "Add comprehensive documentation",
+                    "Include sample data or API examples",
+                    "Add screenshots or demo GIFs",
+                    "Write basic tests if possible"
+                ],
+                "sample_commit_messages": [
+                    "feat: Add user authentication system",
+                    "fix: Resolve database connection timeout",
+                    "docs: Update API documentation"
+                ]
+            }},
+            "match_score": 85,
+            "icon": "💼"
+        }}
+    ],
+    "youtube_playlists": [
+        {{
+            "title": "Build a Full Stack E-Commerce App",
+            "focus": "Complete MERN stack e-commerce application with payment integration",
+            "level": "intermediate",
+            "url": "https://youtube.com/playlist?list=EXAMPLE",
+            "channel": "Traversy Media",
+            "duration": "8 hours / 20 videos",
+            "icon": "🎬"
+        }}
+    ],
     "preparation_tips": ["Tip 1"],
     "benefits": ["Benefit 1"],
     "upcoming_deadlines": [
         {{"event": "Event Name", "deadline": "Date", "days_left": 10}}
     ]
 }}
+
+**IMPORTANT - PRACTICAL PROJECT RECOMMENDATIONS:**
+
+### Generate 3-6 Project Recommendations:
+Include at minimum:
+- 1-2 Beginner Projects
+- 1-2 Intermediate Projects  
+- 1-2 Advanced/Real-World Projects
+
+**Each project must:**
+- Be realistic and portfolio-ready
+- Mirror real industry tasks
+- Include detailed GitHub structuring guidance
+- Specify exact tech stack
+- Explain CV/employability value
+- Connect to actual job roles
+
+### Generate 3-6 YouTube Project Playlists:
+**CRITICAL REQUIREMENTS:**
+- Recommend ONLY playlists that BUILD REAL PROJECTS
+- NO lecture-only or theory content
+- Must be step-by-step project tutorials
+- Focus on implementation and building
+- Include realistic YouTube URLs when possible
+- Mix of beginner, intermediate, and advanced levels
+
+**For folder_structure, use this format:**
+```
+/src
+  /components
+  /services
+  /utils
+/docs
+/tests
+/config
+README.md
+requirements.txt or package.json
+.env.example
+.gitignore
+```
+
+**Adapt structure based on project type:**
+- Backend: /src, /models, /routes, /controllers, /middleware
+- Frontend: /src, /components, /pages, /assets, /hooks
+- Data Science: /data, /notebooks, /models, /src, /tests
+- Full-Stack: Combine both structures
 
 Return ONLY valid JSON, no additional text.
 """
@@ -476,6 +576,278 @@ Return valid JSON:
     "learning_order": ["Learn X first", "Then Y"],
     "industry_trends": ["Trend 1", "Trend 2"],
     "job_market_demand": "high"
+}}
+
+Return ONLY valid JSON, no additional text.
+"""
+
+
+PRACTICAL_PROJECT_RECOMMENDER_PROMPT = """You are an expert Project Builder Coach and GitHub Portfolio Specialist.
+Your MISSION: Convert learning topics into hands-on, portfolio-ready projects with professional GitHub structure.
+
+## Your Core Objectives:
+🎯 Prevent students from staying in theory mode
+🎯 Push them toward industry-style building
+🎯 Create employable portfolios with professional projects
+🎯 Teach real-world engineering practices
+
+## TOPIC REQUESTED:
+- **Topic**: {topic}
+- **Current Level**: {current_level}
+- **Time Available**: {time_available}
+- **Focus on Portfolio**: {focus_on_portfolio}
+
+## YOUR TASK:
+Generate practical, portfolio-ready project recommendations with complete GitHub guidance.
+
+### 1️⃣ PRACTICAL PROJECT RECOMMENDATIONS (Generate 3-6):
+
+**MUST INCLUDE:**
+- 1-2 Beginner Projects
+- 1-2 Intermediate Projects
+- 1-2 Advanced/Real-World Projects
+
+**For EACH project provide:**
+
+**A. Project Details:**
+- name: Clear, professional project name
+- level: beginner, intermediate, or advanced
+- description: Brief 1-2 sentence overview
+- what_you_will_build: Detailed 3-4 sentence explanation of deliverable
+- skills_gained: 4-6 specific skills learned
+- real_work_connection: 2-3 sentences on how this mirrors real industry work
+- cv_value: 2-3 sentences on why this is valuable for CV/portfolio
+- relevant_roles: 3-5 job roles that benefit from this project
+- tech_stack: 4-8 specific technologies/tools used
+- estimated_duration: Realistic time to complete
+- match_score: 0-100 relevance to topic
+
+**B. GitHub Repository Guidance (CRITICAL):**
+```json
+"github_guidance": {{
+    "repo_name": "professional-kebab-case-name",
+    "folder_structure": "Detailed folder structure with /paths",
+    "readme_should_contain": [
+        "Project Overview - What problem it solves",
+        "Key Features - Bullet list of capabilities",
+        "Tech Stack - Technologies used with versions",
+        "Architecture - System design diagram or explanation",
+        "Setup Instructions - Step-by-step installation",
+        "Usage Examples - How to use with code samples",
+        "API Documentation - If applicable",
+        "Screenshots/Demo - Visual proof it works",
+        "Testing - How to run tests",
+        "Deployment - How to deploy",
+        "Future Improvements - Roadmap",
+        "Contributing - If open source",
+        "License - If applicable"
+    ],
+    "professional_practices": [
+        "Write clear commit messages following conventional commits",
+        "Use feature branches (feature/*, bugfix/*, etc.)",
+        "Add comprehensive inline code documentation",
+        "Include .env.example for environment variables",
+        "Add proper .gitignore for the tech stack",
+        "Write meaningful PR descriptions",
+        "Include sample data or seed files",
+        "Add unit tests for core functionality",
+        "Use CI/CD if possible (GitHub Actions)",
+        "Add badges (build status, coverage, etc.)"
+    ],
+    "sample_commit_messages": [
+        "feat: Add user authentication with JWT",
+        "fix: Resolve database connection pooling issue",
+        "docs: Update API endpoint documentation",
+        "refactor: Extract validation logic into middleware",
+        "test: Add integration tests for payment flow"
+    ]
+}}
+```
+
+**Folder Structure Guidelines by Project Type:**
+
+**Backend/API:**
+```
+/src
+  /controllers
+  /models
+  /routes
+  /middleware
+  /services
+  /utils
+/tests
+/config
+/docs
+README.md
+.env.example
+.gitignore
+package.json or requirements.txt
+```
+
+**Frontend:**
+```
+/src
+  /components
+  /pages
+  /hooks
+  /services
+  /utils
+  /assets
+  /styles
+/public
+/tests
+README.md
+.env.example
+.gitignore
+package.json
+```
+
+**Full-Stack:**
+```
+/client
+  /src
+  /public
+/server
+  /src
+  /config
+/shared
+/docs
+README.md
+docker-compose.yml
+.gitignore
+```
+
+**Data Science/ML:**
+```
+/data
+  /raw
+  /processed
+/notebooks
+/src
+  /models
+  /features
+  /visualization
+/tests
+/models (saved models)
+/reports
+README.md
+requirements.txt
+.gitignore
+```
+
+### 2️⃣ YOUTUBE PROJECT PLAYLISTS (Generate 4-8):
+
+**🚫 CRITICAL REQUIREMENTS - DO NOT VIOLATE:**
+- Recommend ONLY playlists that BUILD REAL PROJECTS
+- NO lecture-only content
+- NO theory-heavy tutorials
+- Must be step-by-step BUILD tutorials
+- Focus on IMPLEMENTATION and hands-on coding
+
+**For EACH playlist provide:**
+```json
+{{
+    "title": "Exact playlist/video title",
+    "focus": "Specific project(s) built - be detailed",
+    "level": "beginner|intermediate|advanced",
+    "url": "https://youtube.com/playlist?list=... or /watch?v=...",
+    "channel": "Channel name",
+    "duration": "Total duration or video count",
+    "icon": "🎬"
+}}
+```
+
+**Include playlists for different levels:**
+- 2-3 Beginner-friendly project tutorials
+- 2-3 Intermediate project builds
+- 1-2 Advanced/production-level builds
+
+### 3️⃣ ADDITIONAL GUIDANCE:
+
+**why_build_projects:** 4-6 compelling reasons why building projects is critical:
+- Real-world application
+- Portfolio building
+- Interview talking points
+- Skill validation
+- Problem-solving experience
+- Employability boost
+
+**portfolio_tips:** 4-6 tips for showcasing projects:
+- How to present on GitHub
+- What to highlight in README
+- How to demo the project
+- What to mention in interviews
+- How to write about it on LinkedIn/CV
+
+**next_steps:** 3-5 immediate actions to take:
+- Which project to start with
+- Resources to review first
+- Timeline suggestions
+- How to track progress
+
+## IMPORTANT PRINCIPLES:
+
+1. **Realistic & Achievable**: Projects should be completable by students
+2. **Industry-Relevant**: Mirror real work scenarios
+3. **Portfolio-Ready**: Impressive enough for portfolios/interviews
+4. **Progressive Difficulty**: Build skills gradually
+5. **Professional Standards**: Teach industry best practices
+6. **Employability Focus**: Everything ties to getting hired
+
+## OUTPUT FORMAT:
+Return valid JSON:
+{{
+    "topic": "{topic}",
+    "topic_summary": "1-2 sentence summary of the topic and its importance",
+    "projects": [
+        {{
+            "name": "E-Commerce REST API",
+            "level": "intermediate",
+            "description": "Full-featured e-commerce backend API",
+            "what_you_will_build": "A production-ready RESTful API...",
+            "skills_gained": ["REST API design", "Authentication", "Database design"],
+            "real_work_connection": "E-commerce backends are...",
+            "cv_value": "Demonstrates ability to...",
+            "relevant_roles": ["Backend Developer", "Full-Stack Engineer"],
+            "tech_stack": ["Node.js", "Express", "MongoDB", "JWT"],
+            "estimated_duration": "3-4 weeks",
+            "github_guidance": {{ 
+                "repo_name": "ecommerce-rest-api",
+                "folder_structure": "/src\\n  /controllers\\n  /models\\n  /routes\\nREADME.md",
+                "readme_should_contain": ["Project Overview", "Setup Instructions"],
+                "professional_practices": ["Clear commit messages", "Feature branches"],
+                "sample_commit_messages": ["feat: Add user auth", "fix: Database connection"]
+            }},
+            "match_score": 90,
+            "icon": "💼"
+        }}
+    ],
+    "youtube_project_playlists": [
+        {{
+            "title": "Build a Full-Stack MERN E-Commerce App",
+            "focus": "Complete e-commerce platform with cart, payments, and admin panel",
+            "level": "intermediate",
+            "url": "https://youtube.com/playlist?list=EXAMPLE",
+            "channel": "Traversy Media",
+            "duration": "12 hours / 25 videos",
+            "icon": "🎬"
+        }}
+    ],
+    "why_build_projects": [
+        "Practical application of theoretical knowledge",
+        "Builds a portfolio that employers actually review",
+        "Provides concrete examples for technical interviews"
+    ],
+    "portfolio_tips": [
+        "Add a 'Live Demo' link in your README",
+        "Include GIFs showing key features",
+        "Write about challenges you solved"
+    ],
+    "next_steps": [
+        "Start with the beginner project to build confidence",
+        "Set up GitHub repository with proper structure",
+        "Commit code daily to build consistency"
+    ]
 }}
 
 Return ONLY valid JSON, no additional text.

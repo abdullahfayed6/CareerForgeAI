@@ -114,6 +114,17 @@ class EventRecommendation(BaseModel):
     conferences: List[EventMatch] = Field(default_factory=list, description="Recommended conferences")
     competitions: List[EventMatch] = Field(default_factory=list, description="Recommended competitions")
     meetups: List[EventMatch] = Field(default_factory=list, description="Recommended meetups")
+    
+    # Practical projects and learning resources
+    recommended_projects: List[ProjectBuildRecommendation] = Field(
+        default_factory=list, 
+        description="Portfolio-ready project recommendations"
+    )
+    youtube_playlists: List[YouTubeProjectPlaylist] = Field(
+        default_factory=list, 
+        description="YouTube playlists for building projects"
+    )
+    
     preparation_tips: List[str] = Field(
         default_factory=list, 
         description="Tips to prepare for events"
@@ -364,3 +375,108 @@ class SkillsToolsRequest(BaseModel):
     )
     include_soft_skills: bool = Field(default=True, description="Include soft skills")
     max_results: int = Field(default=10, ge=1, le=30, description="Max results per category")
+
+
+# ============================================
+# Practical Project Build Models
+# ============================================
+
+class YouTubeProjectPlaylist(BaseModel):
+    """YouTube playlist focused on building projects."""
+    title: str = Field(..., description="Playlist/video title")
+    focus: str = Field(..., description="What project(s) are built in this playlist")
+    level: str = Field(..., description="beginner, intermediate, advanced")
+    url: str = Field(..., description="YouTube URL")
+    channel: Optional[str] = Field(None, description="Channel name")
+    duration: Optional[str] = Field(None, description="Total duration or video count")
+    icon: str = Field(default="🎬", description="Display icon")
+
+
+class GitHubGuidance(BaseModel):
+    """Professional GitHub repository guidance."""
+    repo_name: str = Field(..., description="Recommended repository name")
+    folder_structure: str = Field(..., description="Recommended folder/file structure")
+    readme_should_contain: List[str] = Field(
+        default_factory=list, 
+        description="Key sections for README"
+    )
+    professional_practices: List[str] = Field(
+        default_factory=list, 
+        description="Best practices to follow"
+    )
+    sample_commit_messages: List[str] = Field(
+        default_factory=list, 
+        description="Example professional commit messages"
+    )
+
+
+class ProjectBuildRecommendation(BaseModel):
+    """Practical, portfolio-ready project recommendation."""
+    name: str = Field(..., description="Project name")
+    level: str = Field(..., description="beginner, intermediate, advanced")
+    description: str = Field(..., description="Brief project description")
+    what_you_will_build: str = Field(..., description="Detailed description of deliverable")
+    skills_gained: List[str] = Field(default_factory=list, description="Skills you'll learn")
+    real_work_connection: str = Field(..., description="How this mirrors real industry work")
+    cv_value: str = Field(..., description="Why this project is valuable for CV/portfolio")
+    relevant_roles: List[str] = Field(default_factory=list, description="Job roles that benefit from this")
+    tech_stack: List[str] = Field(default_factory=list, description="Technologies used")
+    estimated_duration: str = Field(..., description="Time to complete")
+    github_guidance: GitHubGuidance = Field(..., description="GitHub structuring guidance")
+    match_score: int = Field(ge=0, le=100, default=75, description="Match score 0-100")
+    icon: str = Field(default="💼", description="Display icon")
+
+
+class PracticalProjectResponse(BaseModel):
+    """Complete practical project recommendation response."""
+    topic: str = Field(..., description="Topic/field for projects")
+    topic_summary: str = Field(..., description="Brief summary of the topic")
+    
+    # Projects by level
+    projects: List[ProjectBuildRecommendation] = Field(
+        default_factory=list, 
+        description="All recommended projects"
+    )
+    
+    # YouTube resources
+    youtube_project_playlists: List[YouTubeProjectPlaylist] = Field(
+        default_factory=list, 
+        description="YouTube playlists that build real projects"
+    )
+    
+    # Guidance
+    why_build_projects: List[str] = Field(
+        default_factory=list, 
+        description="Why building projects is critical"
+    )
+    portfolio_tips: List[str] = Field(
+        default_factory=list, 
+        description="Tips for showcasing projects in portfolio"
+    )
+    next_steps: List[str] = Field(
+        default_factory=list, 
+        description="Recommended next actions"
+    )
+
+
+class ProjectRequest(BaseModel):
+    """Request for practical project recommendations."""
+    topic: str = Field(..., description="Topic or field to find projects for")
+    current_level: str = Field(
+        default="beginner",
+        description="Current skill level: beginner, intermediate, advanced"
+    )
+    time_available: str = Field(
+        default="moderate",
+        description="Time commitment: limited, moderate, extensive"
+    )
+    focus_on_portfolio: bool = Field(
+        default=True, 
+        description="Focus on portfolio-ready projects"
+    )
+    max_projects: int = Field(
+        default=6, 
+        ge=1, 
+        le=15, 
+        description="Maximum projects to recommend"
+    )

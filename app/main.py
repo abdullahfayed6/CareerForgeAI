@@ -15,6 +15,7 @@ from app.api.cv import router as cv_router
 from app.api.advisor import router as advisor_router
 from app.api.work import router as work_router
 from app.api.profiling import router as profiling_router
+from app.api.project import router as project_router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -43,9 +44,10 @@ for any lecture or topic. Includes flashcards, practice exercises, and milestone
 ### 5. Recommender Multi-Agent
 AI-powered recommendation system with specialized agents:
 - **Internship Recommender**: Personalized internship matching with skill gap analysis
-- **Event Recommender**: Hackathons, workshops, conferences, and competitions
+- **Event Recommender**: Hackathons, workshops, conferences, and competitions (includes project recommendations)
 - **Course Recommender**: Popular courses and certifications for any topic
 - **Skills/Tools Recommender**: Related skills and tools for career development
+- **Practical Project Recommender**: Portfolio-ready projects with GitHub structuring guidance
 
 ### 6. CV Creator Agent
 AI-powered CV generation system that:
@@ -102,6 +104,7 @@ app.include_router(cv_router)
 app.include_router(advisor_router)
 app.include_router(work_router)
 app.include_router(profiling_router)
+app.include_router(project_router)
 
 
 @app.get("/")

@@ -11,6 +11,9 @@ from app.models.recommender_schemas import (
     EventRecommendation,
     EventRequest,
     UserPreferences,
+    ProjectBuildRecommendation,
+    YouTubeProjectPlaylist,
+    GitHubGuidance,
 )
 
 logger = logging.getLogger(__name__)
@@ -43,6 +46,8 @@ class EventRecommenderAgent(BaseInterviewAgent):
             "conferences": [],
             "competitions": [],
             "meetups": [],
+            "recommended_projects": [],
+            "youtube_playlists": [],
             "preparation_tips": [],
             "benefits": [],
             "upcoming_deadlines": []
@@ -149,11 +154,68 @@ class EventRecommenderAgent(BaseInterviewAgent):
                     continue
             return results
         
+        def parse_projects(projects_list: List[Dict]) -> List[ProjectBuildRecommendation]:
+            """Parse project recommendations with GitHub guidance."""
+            results = []
+            for item in projects_list:
+                try:
+                    github_data = item.get("github_guidance", {})
+                    github_guidance = GitHubGuidance(
+                        repo_name=github_data.get("repo_name", "project-name"),
+                        folder_structure=github_data.get("folder_structure", "/src\nREADME.md"),
+                        readme_should_contain=github_data.get("readme_should_contain", []),
+                        professional_practices=github_data.get("professional_practices", []),
+                        sample_commit_messages=github_data.get("sample_commit_messages", [])
+                    )
+                    
+                    project = ProjectBuildRecommendation(
+                        name=item.get("name", "Project"),
+                        level=item.get("level", "intermediate"),
+                        description=item.get("description", ""),
+                        what_you_will_build=item.get("what_you_will_build", ""),
+                        skills_gained=item.get("skills_gained", []),
+                        real_work_connection=item.get("real_work_connection", ""),
+                        cv_value=item.get("cv_value", ""),
+                        relevant_roles=item.get("relevant_roles", []),
+                        tech_stack=item.get("tech_stack", []),
+                        estimated_duration=item.get("estimated_duration", ""),
+                        github_guidance=github_guidance,
+                        match_score=min(100, max(0, int(item.get("match_score", 75)))),
+                        icon=item.get("icon", "💼")
+                    )
+                    results.append(project)
+                except Exception as e:
+                    logger.warning(f"Error parsing project: {e}")
+                    continue
+            return results
+        
+        def parse_youtube_playlists(playlists_list: List[Dict]) -> List[YouTubeProjectPlaylist]:
+            """Parse YouTube project playlists."""
+            results = []
+            for item in playlists_list:
+                try:
+                    playlist = YouTubeProjectPlaylist(
+                        title=item.get("title", ""),
+                        focus=item.get("focus", ""),
+                        level=item.get("level", "intermediate"),
+                        url=item.get("url", ""),
+                        channel=item.get("channel"),
+                        duration=item.get("duration"),
+                        icon=item.get("icon", "🎬")
+                    )
+                    results.append(playlist)
+                except Exception as e:
+                    logger.warning(f"Error parsing YouTube playlist: {e}")
+                    continue
+            return results
+        
         hackathons = parse_events(data.get("hackathons", []), max_results)
         workshops = parse_events(data.get("workshops", []), max_results)
         conferences = parse_events(data.get("conferences", []), max_results)
         competitions = parse_events(data.get("competitions", []), max_results)
         meetups = parse_events(data.get("meetups", []), max_results)
+        recommended_projects = parse_projects(data.get("recommended_projects", []))
+        youtube_playlists = parse_youtube_playlists(data.get("youtube_playlists", []))
         
         total_events = len(hackathons) + len(workshops) + len(conferences) + len(competitions) + len(meetups)
         
@@ -165,6 +227,8 @@ class EventRecommenderAgent(BaseInterviewAgent):
             conferences=conferences,
             competitions=competitions,
             meetups=meetups,
+            recommended_projects=recommended_projects,
+            youtube_playlists=youtube_playlists,
             preparation_tips=data.get("preparation_tips", []),
             benefits=data.get("benefits", []),
             upcoming_deadlines=data.get("upcoming_deadlines", [])
